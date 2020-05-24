@@ -10,9 +10,9 @@ def load_MP3(file_path):
 	Parameters:
 		{file_path} string : The path to the requested audio file
 	Return:
-		{on_success} AudioSegment
-		{on_fail} None
+		AudioSegment : Returns an object of type AudioSegment, if the provided file is invalid, returns None isntead
 	"""
+
 	# Load mp3 from absolute path at specified location {file_path}
 	absolute_path = os.path.abspath(file_path)
 	
