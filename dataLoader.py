@@ -3,7 +3,7 @@
 import os
 from pydub import AudioSegment
 
-def loadMP3(file_path):
+def load_MP3(file_path):
 	"""
 	Description: This function will attempt to load an mp3 audio file from the provided {file_path} location. If successful, an AudioSegment object will be returned, otherwise None will be returned
 	Context: Before processing a file, we must load the necessary audio data, this function will perform that action
@@ -22,14 +22,8 @@ def loadMP3(file_path):
 	except FileNotFoundError:
 		mp3_file = None
 	except:
-		raise Exception("Unknown Error while loading mp3")
+		raise Exception("Unknown Error while loading mp3, possibly invalid file")
 		return
 
 	# Return AudioSegment object
 	return mp3_file
-
-	
-	print(mp3_file)
-
-loadMP3("CAG.mp3")
-loadMP3("/CAG.mp3")
