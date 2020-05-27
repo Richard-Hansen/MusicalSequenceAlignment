@@ -1,7 +1,6 @@
 # This file provides functionality for processing a provided AudioSegment object into a more useable format, also provides auxillary debugging and information tools
 
 from pydub import AudioSegment
-import dataLoader
 
 def AudioSegment_details(AS_object):
 	"""
@@ -53,7 +52,7 @@ def AudioSegment_raw(AS_object):
 def AudioSegment_verify(input):
 	"""
 	Description: Verifies that the provided parameter is an AudioSegment object
-	Context: 
+	Context: When you want to verify that an object is a valid AudioSegment object
 	Parameters:
 		{input} Object : Object to be comapred with the AudioSegment class
 	Return:
@@ -65,6 +64,3 @@ def AudioSegment_verify(input):
 		return True
 
 	return False
-
-AS = dataLoader.load_MP3("CAG.mp3")
-AudioSegment_details(AS)
