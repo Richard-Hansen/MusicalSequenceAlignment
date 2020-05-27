@@ -65,7 +65,7 @@ def calc_opt(seq_A, seq_B, arr, i, j, mask):
 	Return:
 		{Integer} : The resulting opt value for the partial sequence alignment of seq_A[0:i] and seq_B[0:j]
 	"""
-
+    
     # If out of bounds, return 0
     if i < 0 or j < 0:
         return 0
@@ -83,10 +83,57 @@ def calc_opt(seq_A, seq_B, arr, i, j, mask):
     potential_val_3 = calc_opt(seq_A, seq_B, arr, i-1, j, mask)   + match_value(seq_A[i],   None) # Assumes we pair the character at i with a gap
 
     # Choose the highest value out
-    max_1 = max(potential_val_1,potential_val_2)
-    max_2 = max(max_1, potential_val_3)
-    opt_choice = max(max_2, 0)
+    opt_choice = max(potential_val_1, potential_val_2, potential_val_3, 0)
 
     # Set this value in our opt array
     arr[i][j] = opt_choice
     return arr[i][j]
+
+# Iterative linear memory calculation will only allow us to display a maximum score for the partial matching, not the matched location itself (other than the i,j lcoation of the end of the prefix)
+def iterative_linear_space_partial_sequence_alignment(seq_A, seq_B, match_function):
+    len_seq_A = len(seq_A)
+    len_seq_B = len(seq_B)
+
+    # Based off of our DP recursive relationship, we do not require to store the entire n by m matrix.
+    opt_arr = np.zeros((2, len_seq_B))
+    
+    # the current maximum partial alignment score in our matrix
+    curr_max = 0
+
+    # the current row in our opt_arr that we are calculating values for, we will be over writting the previous values stored here
+    curr_row = 1
+    prev_row = 0
+
+    # at each iteration of the loop, we will be matching the partial alignment of seq_A[0:seq_A_suffix] to seq_B[0:seq_B_suffix]
+    for seq_A_suffix in range(len_seq_A):
+        
+        # update our current and previous row
+        curr_row = 0 if curr_row == 1 else 1
+        prev_row = 0 if prev_row == 1 else 1
+
+        for seq_B_suffix in range(len_seq_B):
+
+            # calculate the score of matching the last elements of the suffix together
+            previous_opt_val_match = 0 if seq_B_suffix - 1 < 0 else opt_arr[prev_row][seq_B_suffix-1] # previous opt value if we were to match the two current elements
+            match_pair_score = match_function(seq_A[seq_A_suffix], seq_B[seq_B_suffix]) # the matching score related to matching these two elements
+            match_pair_value = previous_opt_val_match + match_pair_score # the final value of this pairing
+
+            # calculate the score of matching the last element of seq_A with a gap
+            previous_opt_val_gapA = opt_arr[prev_row][seq_B_suffix] # previous opt value if we were to match the current element of seq_A with a gap
+            match_gapA_score = match_function(seq_A[seq_A_suffix], None) # the matching score related to matching the current element of seq_A with a gap
+            match_gapA_value = previous_opt_val_gapA + match_gapA_score # the final value of this pairing
+
+            # calculate the score of matching the last element of seq_B with a gap
+            previous_opt_val_gapB = 0 if seq_B_suffix - 1 < 0 else opt_arr[curr_row][seq_B_suffix-1] # previous opt value if we were to match a gap with the current element of seq_B
+            match_gapB_score = match_function(None, seq_B[seq_B_suffix]) # the matching score related to matching a gap with the current element of seq_B
+            match_gapB_value = previous_opt_val_gapB + match_gapB_score # the final value of this pairing
+
+            # choose the max value to set into our opt_arr
+            opt_arr[curr_row][seq_B_suffix] = max(match_pair_value, match_gapA_value, match_gapB_value)
+            
+            # update our current maximum pairwise alignment score
+            curr_max = max(curr_max, opt_arr[curr_row][seq_B_suffix])
+
+    return curr_max
+
+
