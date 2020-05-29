@@ -4,3 +4,4 @@ Partial Alignment of songs/music to locate similar sounding subsections across m
 # Required Libraries
 1. pydub https://github.com/jiaaro/pydub
 2. ffmpeg https://ffmpeg.org/
+3. NumPy https://numpy.org/
